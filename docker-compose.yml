@@ -1,0 +1,27 @@
+version: '2' 
+services:
+  web:
+    build: ./flask-app
+    container_name: flask_app
+    ports:
+     - "5000:5000"
+    volumes:
+     - ./flask-app:/app #hot reloading
+    depends_on:
+     - mysql
+    restart: always
+    links:
+     - mysql
+
+  mysql:
+    image: mysql:8.0.19
+    container_name: mysql
+    environment:
+      MYSQL_DATABASE: test
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: my_user
+      MYSQL_PASSWORD: my_password
+    ports:
+    - "3307:3306"
+    volumes:
+     - ./mysql_data:/var/lib/mysql #hot reloading    

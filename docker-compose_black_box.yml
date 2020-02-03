@@ -1,0 +1,22 @@
+version: '2' 
+services:
+  web:
+    image: flask-app-img:black_box
+    restart: always
+    container_name: flask_black_box
+    working_dir: /app
+    ports:
+     - "5000:5000"
+    depends_on:
+     - mysql    
+    links:
+     - mysql
+
+  mysql:
+    image: mysql:black_box
+    container_name: mysql_black_box
+    restart: always
+    ports:
+    - "3307:3306"
+    volumes:
+     - ./mysql_data:/var/lib/mysql #hot reloading   
