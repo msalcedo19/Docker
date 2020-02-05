@@ -17,9 +17,9 @@ app.config['MYSQL_DATABASE_PORT'] = 3306
 app.config['MYSQL_DATABASE_SOCKET'] = None
 
 
-
 mysql = MySQL()
 mysql.init_app(app)
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -61,6 +61,7 @@ def hello(name):
     js_url = url_for('static', filename='add.js')
     return make_response(template.render(name=name,js_url=js_url))     
 
+
 @app.route('/bin', methods=['GET', 'POST'])
 def binary_file():
     if request.method == "POST":        
@@ -73,6 +74,7 @@ def binary_file():
     popen.wait()
     output = popen.stdout.read()
     return output
+
 
 # The host='0.0.0.0' means the web app will be accessible to any device on the network
 if __name__ == "__main__":

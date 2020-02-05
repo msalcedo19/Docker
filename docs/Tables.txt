@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS User ("
+                            "username VARCHAR(100) NOT NULL ,"
+                            "PRIMARY KEY(username),"
+                            "password INT NOT NULL")
+
+CREATE TABLE IF NOT EXISTS Coupon ("
+                            "idCoupon INT NOT NULL AUTO INCREMENT ,"
+                            "PRIMARY KEY(idCoupon),"
+                            "value INT NOT NULL")
+
+CREATE TABLE IF NOT EXISTS Purchase ("
+                            "idPurchase INT NOT NULL AUTO INCREMENT ,"
+                            "PRIMARY KEY(idPurchase),"
+                            "value INT NOT NULL")
+
+CREATE TABLE IF NOT EXISTS Item ("
+                            "idItem INT NOT NULL AUTO INCREMENT ,"
+                            "PRIMARY KEY(idPurchase),"
+			    "name VARCHAR(100) NOT NULL,"
+                            "value INT NOT NULL")
