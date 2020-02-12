@@ -1,0 +1,8 @@
+DROP TABLE User
+|
+DROP TABLE Coupon
+|
+DROP TABLE Purchase
+|
+DROP TABLE Item
+
