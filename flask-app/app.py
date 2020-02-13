@@ -3,8 +3,7 @@ from flask import Flask, request, redirect, url_for, Markup, make_response
 from flaskext.mysql import MySQL
 from jinja2 import Environment, FileSystemLoader
 import subprocess
-from bson.json_util import dumps
-
+import json
 
 app = Flask(__name__)
 loader = FileSystemLoader( searchpath="templates/")
@@ -16,7 +15,6 @@ app.config['MYSQL_DATABASE_HOST'] = 'mysql'
 app.config['MYSQL_DATABASE_PORT'] = 3306
 app.config['MYSQL_DATABASE_DB'] = "db_ecommerce"
 app.config['MYSQL_DATABASE_SOCKET'] = None
-
 
 mysql = MySQL()
 mysql.init_app(app)
@@ -38,11 +36,11 @@ def sign_up():
                 id_coupon = cursor.lastrowid
                 user_sql = "INSERT INTO User(username, password, idCoupon) VALUES (%s, %s, %s)"
                 cursor.execute(user_sql, (info_register["username"], info_register["password"], id_coupon))
-                response = "Fue registrado exitosamente el usuario: %s" % (info_register["username"])
-                return dumps(response)
+                response = {"Message": "Fue registrado exitosamente el usuario: %s" % (info_register["username"])}
+                return json.dumps(response)
             else:
-                response = ("No fue posible registar al usuario: %s" % (info_register["username"]))
-                return dumps(response)
+                response = {"Message": "No fue posible registar al usuario: %s" % (info_register["username"])}
+                return json.dumps(response)
         finally:
             conn.commit()
             cursor.close()
@@ -56,9 +54,9 @@ def log_in(username):
         cursor.execute("SELECT * FROM User WHERE username = %s", username)
         response = cursor.fetchall()
         if response:
-            return dumps(response[0])
+            return json.dumps(response[0])
         else:
-            return dumps("No existe el usuario: %s" % (username))
+            return json.dumps({"Message": "No existe el usuario: %s" % username})
     finally:
         cursor.close()
 
@@ -68,7 +66,7 @@ def create_tables():
     tables = open("../docs/Create_Tables.txt", 'r').read().split("|")
     conn = mysql.get_db()
     cursor = conn.cursor()
-    response = dumps({"Las tablas fueron creadas correctamente"})
+    response = json.dumps({"Message": "Las tablas fueron creadas correctamente"})
     try:
         for sql in tables:
             cursor.execute(sql)
@@ -83,7 +81,7 @@ def drop_tables():
     tables = open("../docs/Drop_Tables.txt", 'r').read().split("|")
     conn = mysql.get_db()
     cursor = conn.cursor()
-    response = dumps({"Las tablas fueron eliminadas correctamente"})
+    response = json.dumps({"Message": "Las tablas fueron eliminadas correctamente"})
     try:
         for sql in tables:
             cursor.execute(sql)
