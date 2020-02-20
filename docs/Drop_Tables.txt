@@ -5,4 +5,6 @@ DROP TABLE Coupon
 DROP TABLE Purchase
 |
 DROP TABLE Item
+|
+DROP TABLE Purchase_Item
 

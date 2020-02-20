@@ -1,0 +1,485 @@
+/*
+ *---------------------------------------------------------------
+ *--------------------ECOMMERCE STYLES---------------------------
+ *---------------------------------------------------------------
+*/
+
+/*Brand font imported from google font's library*/
+@import url('https://fonts.googleapis.com/css?family=Montserrat+Subrayada&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Raleway&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Merriweather:400,900&display=swap');
+
+/*CSS Rule to exports icons into posible usable browsers*/
+@font-face {
+    font-family: 'icomoon'; /*This calls the icomoon library for the icons I use in my web page*/
+    src: url("../fonts/icomoon/icomoon.eot?srf3rx"); /*.eot source for IE9 Compat */
+    src: url("../fonts/icomoon/icomoon.eot?srf3rx#iefix") format("embedded-opentype"), /*.eot source for  > IE9 Compat */
+         url("../fonts/icomoon/icomoon.ttf?srf3rx") format("truetype"), /*.ttf source for Safari, Andrioid & iOS Compat */
+         url("../fonts/icomoon/icomoon.woff?srf3rx") format("woff"), /*.woff source for latest browsers */
+         url("../fonts/icomoon/icomoon.svg?srf3rx#icomoon") format("svg"); /*.svg source Legacy iOS */
+    font-weight: normal; /* Defines the boldness of the font-face */
+    font-style: normal; /* Defines if font-face is normal, italic or oblique */
+}
+
+/*Id selector to determine global features of the web page*/
+header{
+    width: 100%;
+}
+
+.container-fluid.top-margined{
+    margin-top: 3rem;
+}
+
+#content, #main{
+    width: inherit;
+}
+
+.faded{
+    color: #f7f7f7;
+}
+
+.navbar{
+    background-color: #292b2c;
+    height: 3rem;
+    width: inherit;
+    padding:  0 0 0;
+    border-bottom: #000;
+
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+	
+	-moz-box-shadow: 0px 2px 2px rgba(203,204,198);
+    -webkit-box-shadow: 0px 2px 2px rgba(203,204,198);
+    box-shadow: 0px 2px 2px rgba(203,204,198);
+}
+.navbar-header {
+    text-align: right;
+}
+
+ul.nav li {
+    margin: 0 2px 0 2px;
+    border-radius: 2px;
+}
+
+ul.nav li a.nav-link{
+    margin: 0 2px 0 2px;
+    border-radius: 2px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+}
+
+.fa-space-shuttle{
+    color:#2c98f0;
+}
+
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+    .header{
+        max-height: 3.5rem;
+    }
+}
+
+/*Mixin for the sidebar style in small devices*/
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100vh;
+    background-color:  #f2f3f7;
+    color: #fff;
+    transition: all 0.3s;
+}
+
+#sidebar .polished{
+    height: 50%;
+    border: none;
+}
+
+
+#sidebar.active {
+    min-width: 110px;
+    max-width: 110px;
+    text-align: center;
+}
+
+.margined{
+    margin: 4px;
+}
+
+.middle{
+    width: 40%;
+}
+
+.form-padded{
+    padding-left: 40px;
+}
+
+.unpadded{
+    padding: 0;
+}
+
+.upmargined{
+    margin-top: 8px;
+}
+
+#sidebar.active .sidebar-header p,
+#sidebar.active .CTAs {
+    display: none;
+}
+
+#sidebar.active .sidebar-header strong {
+    display: block;
+}
+
+#sidebar ul li a {
+    text-align: left;
+}
+
+#sidebar.active ul li a {
+    color: #2c98f0;
+    padding: 20px 10px;
+    text-align: center;
+    font-size: 0.85em;
+}
+
+#sidebar.active ul li a i {
+    margin-right: 0;
+    display: block;
+    font-size: 1.8em;
+    margin-bottom: 5px;
+}
+
+#sidebar.active ul ul a {
+    padding: 10px !important;
+}
+
+#sidebar.active .dropdown-toggle::after {
+    top: auto;
+    bottom: 10px;
+    right: 50%;
+    -webkit-transform: translateX(50%);
+    -ms-transform: translateX(50%);
+    transform: translateX(50%);
+}
+
+#sidebar .sidebar-header {
+    border-top: 3rem solid #292b2c;
+    padding: 15px;
+}
+
+#sidebar .sidebar-header strong {
+    display: none;
+    font-size: 1.8em;
+}
+
+#sidebar ul.components {
+    padding: 20px 0;
+}
+
+#sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+}
+
+#sidebar ul li a:hover {
+    color: #2c98f0;
+    border-radius: 3px;
+    background-color: #292b2c;
+}
+
+#sidebar ul li a:focus {
+    color: #2c98f0;
+}
+
+#sidebar ul.sided li{
+    margin-left: 10px;
+}
+
+#sidebar ul li.active>a,
+a[aria-expanded="true"] {
+    color: #ffffff;
+}
+
+/*--------------end of sidebar styles-------------*/
+
+.img_first_page{
+    width: 95%;
+    height: auto;
+    overflow: auto;
+    border-radius: 2px;
+    box-shadow: 4px 2px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.img_signup{
+    width: 40%;
+    height: 85%;
+    overflow: auto;
+    border-radius: 2px;
+    box-shadow: 4px 2px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.img-circular {
+    border-radius: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 80px;
+    max-height: 80px;
+  }
+
+
+/* General style for the content inside the body */
+body {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 400; 
+    font-size: 15px;
+    line-height: 1.8; /* Space between lines of information */
+    color: rgba(0, 0, 0, 0.7); 
+}
+.form{
+    margin-top: 15px;
+    padding: 10px;
+}
+
+.form-box{
+    padding: 10px;
+    border-radius: 2px;
+    box-shadow: 4px 2px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+@media screen and (max-width: 1024px) { /* Set a diferent font-size to small devices with @media screen rule */
+    body {
+        font-size: 16px; 
+    } 
+}
+
+@media (min-width: 800px){
+    navbar-collapse collapse {
+    display: block !important;
+    height: auto !important;
+    padding-bottom: 0;
+    overflow: visible !important;
+    }
+}
+
+p {
+    margin-bottom: 1.5em; /*Separate paragraphs with 1.5 m's of bottom space*/
+}
+  
+/*Gives a elegant font for titles*/
+h1, h2, h3, h4, h5, h6 {
+    color: #000;
+    font-family: 'Merriweather', serif;    
+    font-weight: 400;
+    margin: 10px
+    /*Margin for paragraphs in clock way: top | right  | bottom  | left*/
+}
+
+@media screen and (max-width: 768px) { 
+    /* Set a diferent font-size to small devices with @media screen rule */
+    .brand {
+        font-size: 20px; 
+    }
+    .img-about-circular-info{
+        float:none;
+    }
+}
+
+a {
+    transition: all 0.6s linear;
+}
+
+a.nav-link{
+    font-family: 'Raleway', sans-serif;
+    float: right;
+    text-transform: uppercase;
+    padding: 8px 10px 8px 10px;
+}
+.title-sideheader{
+    color:#000; 
+    font-weight: bold; 
+    font-size: small;
+}
+
+.subtitle-sideheader{
+    color:#888; 
+    font-size: small; 
+    font-weight: bold;
+}
+
+a.navbar-brand{
+    margin: 0 4px 0 0;
+}
+
+#sidebarCollapse_1{
+    padding-left: 45%;
+    background-color:  #292b2c;
+    color: white;
+}
+
+/*------------Content styles-----------------*/
+
+.bordered {
+    margin: 10px 20px 10px 20px;
+}
+
+.beauty{
+    width: 18.5rem;
+    margin: 5px;
+}
+section{
+    width: 100%;
+}
+
+.row{
+    width: 100%;
+    margin: 0 0 0 0;
+}
+
+.row.sectioned{
+    width: 100%;
+    margin: 0 0 0 0;
+    background-color: #f2f3f7;
+    border-radius: 10px;
+}
+
+.cv{
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+.fa-connectdevelop{
+    width: 30px;
+    height: 30px;
+}
+
+.img-about-circular {
+    border-radius: 50%;
+    max-width: 200px;
+    max-height: 200px;
+    margin-bottom: 10px;
+  }
+
+.img-about-circular-info {
+    border-radius: 50%;
+    margin-left: auto;
+    float: left;
+    margin-right: auto;
+    max-width: 200px;
+    max-height: 200px;
+    margin: 8% 8% 5% 5%;
+  }
+
+.danger{
+    color: #CC0011;
+}
+
+.bottom-marg{
+    margin-bottom: 20px;
+}
+  
+.h-negro{
+    border-bottom-style: solid; 
+    border-bottom-color: #000000; 
+    border-bottom-width: 4px;
+}
+
+ul.social_icon{
+    margin-top: 10px;
+    padding: 0;
+}
+
+.social_icon li{
+    display:inline-block;
+    margin-right:20px
+}
+.social_icon li a {
+    height:50px;
+    width:50px;
+    text-align:center;
+    border:1px solid #677fb5;
+    display:block;
+    font-size:18px;border-radius:5px;
+    transition:all 400ms linear 0s;
+    color:#677fb5
+}
+
+.social_icon li a:hover {
+    background-color: white;
+}
+
+
+.social_icon li.face a {
+    color:#26adec;
+}
+.social_icon li.twit a{
+    color:#7ac7eb
+}
+.social_icon li.insta a { 
+    color:#895a4d;
+}
+
+.social_icon li a.nav-link:hover { 
+    background-color: #ffff;
+}
+
+.foot{
+    background-color: #292b2c;
+    width: 100%;
+}
+
+.foot h3, .foot h1{
+    color: #ffff;
+}
+
+.foot p{
+    color: #ffff;
+    margin-bottom: 7.5px;
+}
+
+.foot strong{
+    color: #ffff;
+}
+
+.card-beautify{
+    width: auto;
+    height: auto;
+    margin-bottom: 2em;
+}
+
+#item{
+    display: inline;
+}
+
+.container.foot{
+    margin: 0px;
+    width: 100%;
+}
+
+a.disabled {
+    pointer-events: none;
+    cursor: default;
+  }
+
+.menu{
+    color: white;
+}
+.menu:hover{
+    color: white;
+}
+
+.img-profile{
+    margin: 2rem;
+    height: 80%;
+    width: 90%;
+}
+
+  

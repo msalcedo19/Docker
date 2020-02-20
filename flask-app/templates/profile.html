@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>E-Commerce</title>
+    <meta charset="UTF-8" />
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<!-- mobile first boostrap -->
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		
+		<meta HTTP-EQUIV="Pragma" content="no-cache">
+		<meta HTTP-EQUIV="Cache-Control" content="no-cache">
+	  <meta http-equiv="Content-Script-Type" name="Default_Script_Language" content="text/javascript">
+  
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>		
+    <!-- Popper.JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+    <script src="static/js/app.js"></script>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <!-- CSS propio -->
+    <link rel="stylesheet" href="../static/css/app.css">
+    
+    <!-- Font Awesome JS -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+
+    <link href='https://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="../static/css/profile.css">
+
+  </head>
+  <body>
+    <div class="wrapper">
+    <nav id="sidebar">
+      <div class="sidebar-header text-center">
+        
+        <img src="static/img/sidebar_icon.png" alt="logo" class="img-circular">
+        <p class="text-center">
+        <span class="title-sideheader"><br />
+          Uniandes E-Commerce</span><br />
+        </strong><hr>
+    
+        <a id="sidebarCollapse_1" href="#" data-toggle="sidebar-colapse" class="list-group-item list-group-item-action d-flex">
+          <span><i id="collapse-icon" class="fas fa-angle-double-left"></i></span>&nbsp;
+        </a>
+      </div>
+    
+      
+      <ul class="list-unstyled components polished">
+        <li>
+          <a href="/"><i class="fa fa-home"></i>&nbsp;Inicio</a>
+        </li>
+        <li>
+          <a href="/profile"><i class="fa fa-user"></i>&nbsp;<i class="fa fa-shopping-cart"></i>&nbsp;Mi Perfil</a>
+        </li>
+        <li>
+          <a href="/log_out">
+            <i class="fas fa-sign-out-alt "></i>
+            Salir
+          </a>
+        </li>
+      </ul>
+      
+    </nav>
+    <!-- End of sidebar -->
+
+    <!-- Page Content  -->
+    <div id="content">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark2">
+        <div class="container-fluid">
+          <button type="button" id="sidebarCollapse" class="btn menu d-inline-block d-lg-none" aria-expanded="false" aria-label="Toggle navigation">
+            <i id="menu-icon" class="fas fa-align-left"></i>
+          </button>
+          &nbsp;&nbsp;
+          <br />
+          <h3 class="faded"><i class="fas fa-"></i>&nbsp;Profile</h3>
+        </div>
+      </nav>
+      
+      <div class="card mb-3 perfil_card" >
+          <div class="row no-gutters">
+            <div class="col-5">
+              <img src="http://lorempixel.com/350/350/" class="card-img rounded-circle perfil_img"alt="Imagen Aleatoria de Perfil"></img>
+            </div>
+            <div class="col-7">
+                <div class="card-body perfil_body">
+                    <div class="row">
+                        <div class="col-12">
+                            <p class="card-text perfil_text1"><b>Username: {{user}}</b></p>
+                        </div>
+                        <div class="col-12">
+                            <p class="card-text perfil_text2"><b>Cupon: ${{coupon}}</b></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+      </div>
+
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark2">
+        <div class="container-fluid">
+          <button type="button" id="sidebarCollapse" class="btn menu d-inline-block d-lg-none" aria-expanded="false" aria-label="Toggle navigation">
+            <i id="menu-icon" class="fas fa-align-left"></i>
+          </button>
+          &nbsp;&nbsp;
+          <br />
+          <h3 class="faded"><i class="fas fa-"></i>&nbsp;Purchases</h3>
+        </div>
+      </nav>
+
+      <table class="table compras">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Item</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in range(0, size) %}
+            <tr>
+              <th scope="row">{{i+1}}</th>
+              <td>{{ data_items[i]['item'] }}</td>
+              <td>{{ data_items[i]['quantity'] }}</td>
+              <td>$ {{ data_items[i]['value'] }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

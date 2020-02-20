@@ -1,0 +1,17 @@
+.perfil_card{
+    position: relative;
+    width: 80%;
+    margin: 2% 0% 2% 10%;
+    border-width: 6px;
+    background-color: #edf7f6;
+}
+.perfil_img{height: 15vw;width: 20vw ;margin: 15% 0% 15% 18%;}
+.perfil_body{margin: 15% 0% 0% 0%; padding: 2rem !important;}
+.perfil_text1{margin: 0;font-size: 3vw; font-family: 'Karla', sans-serif}
+.perfil_text2{margin: 0;font-size: 3vw; font-family: 'Karla', sans-serif}
+
+.compras{
+    position: relative;
+    margin: 2% 0% 2% 10%;
+    width: 80%;
+}
