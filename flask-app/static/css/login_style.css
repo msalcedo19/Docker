@@ -13,6 +13,14 @@ a:hover {
   color: #333333;
   text-decoration: none;
 }
+
+.caja_login{
+  padding: 5% 0% 13% 0%;
+}
+.title{
+  font-size: 4vw;
+}
+
 /*=== 3. Text Outside the Box ===*/
 .etc-login-form {
   color: #919191;

@@ -245,6 +245,10 @@ body {
     line-height: 1.8; /* Space between lines of information */
     color: rgba(0, 0, 0, 0.7); 
 }
+
+html, body{
+    padding: 0;
+}
 .form{
     margin-top: 15px;
     padding: 10px;
@@ -482,4 +486,7 @@ a.disabled {
     width: 90%;
 }
 
+.title-sideheader{
+    font-size: 1.3vw;
+}
   

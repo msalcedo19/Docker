@@ -3,7 +3,8 @@
     width: 80%;
     margin: 2% 0% 2% 10%;
     border-width: 6px;
-    background-color: #edf7f6;
+    background-color: #ffffff;
+    border-color: #000000;
 }
 .perfil_img{height: 15vw;width: 20vw ;margin: 15% 0% 15% 18%;}
 .perfil_body{margin: 15% 0% 0% 0%; padding: 2rem !important;}

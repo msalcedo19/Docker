@@ -1,0 +1,12 @@
+version: '2' 
+services:
+  php:
+    image: php:7.3.15-apache-stretch
+    container_name: php_sc
+    restart: always
+    ports:
+     - "8080:80"
+    volumes:
+     - .:/var/www/html/ #hot reloading
+    
+

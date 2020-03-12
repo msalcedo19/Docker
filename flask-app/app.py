@@ -1,8 +1,12 @@
 #!/usr/bin/env/python3.6
+import base64
+import binascii
 import datetime
 import json
-import secrets
+import os
 import subprocess
+from hmac import compare_digest
+from random import SystemRandom
 
 import bcrypt
 import jwt
@@ -15,14 +19,14 @@ app = Flask(__name__)
 loader = FileSystemLoader(searchpath="templates/")
 env = Environment(loader=loader)
 
-#Cambiar esta parte del codigo para cada uno
+# Cambiar esta parte del codigo para cada uno
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'Msrccbf99051006360'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
+app.config['MYSQL_DATABASE_HOST'] = 'mysql'
 app.config['MYSQL_DATABASE_PORT'] = 3306
 app.config['MYSQL_DATABASE_DB'] = "db_ecommerce"
 app.config['MYSQL_DATABASE_SOCKET'] = None
-#--------------------------------------------------------
+# --------------------------------------------------------
 JWT_KEY = "modwmodwmoddwdsca234"
 
 mysql = MySQL()
@@ -53,6 +57,7 @@ def check_cart_info(cart):
             return None
     return cart
 
+
 @app.route('/complete_purchase', methods=['POST'])
 def buy_items():
     # user = {'username': 'juan'}
@@ -60,11 +65,12 @@ def buy_items():
     user = authorize_and_get_user(request)
     if not user:
         return
-    
+
     # cart = {'items': {'1': 200, '2': 1}}
     cart = check_cart_info(request.json)
     if not cart:
         return
+    print(user)
     coupon = user['idCoupon']
     _coup = check_coupon_validity(coupon)
     if _coup == None:
@@ -93,30 +99,20 @@ def buy_items():
                 insert_params.extend([item_id, item_amount])
             case_params.extend(in_params)
             in_sql = in_sql[:-1]
-            inside = f"""(SELECT (`value` * CASE {case_sql} END) as `valuei`
-                        FROM `Item` WHERE `IdItem` IN ({in_sql}))"""
-            select_values = """SELECT @purchase_value, @coupon_value;"""
+            inside = "(SELECT (`value` * CASE %s END) as `valuei` FROM `Item` WHERE `IdItem` IN (%s))" % (case_sql, in_sql)
+            select_values = "SELECT @purchase_value, @coupon_value;"
 
-            queries = [("""SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;""", ()),
-                       ("""START TRANSACTION;""", ()),
-                       (f"""SET @purchase_value = (
-                            SELECT SUM(`valuei`) FROM (
-                                {inside}
-                        ) as `inline_table1` );""", case_params),
-                       ("""SET @coupon_value = (
-                            SELECT `value` FROM `coupon` WHERE `idcoupon` = %s);""", (coupon, )),
+            queries = [("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;", ()),
+                       ("START TRANSACTION;", ()),
+                       ("SET @purchase_value = ( SELECT SUM(`valuei`) FROM ( " +
+                        inside+" ) as `inline_table1` );", case_params),
+                       ("SET @coupon_value = ( SELECT `value` FROM `coupon` WHERE `idcoupon` = %s);", (coupon, )),
                        (select_values, ()),
-                       ("""INSERT INTO `Purchase`(`username`, `value`)
-                        SELECT %s, @purchase_value
-                        WHERE @purchase_value <= @coupon_value;""", (user['username'], )),
-                       (f"""INSERT INTO `Purchase_Item`(`idpurchase`, `iditem`, `amount`)
-                            SELECT `a`, `b`, `c` FROM
-                                (SELECT LAST_INSERT_ID() as `a`, %s as `b`, %s as `c`
-                                {insert_sql}) as `inline_table2`
-                            WHERE @purchase_value <= @coupon_value;""", insert_params),
-                       ("""UPDATE `coupon` SET `value`=`value`- @purchase_value
-                        WHERE `idcoupon`= %s AND @purchase_value <= @coupon_value;
-                        """, (coupon,))]
+                       ("INSERT INTO `Purchase`(`username`, `value`) SELECT %s, @purchase_value WHERE @purchase_value <= @coupon_value;",
+                        (user['username'], )),
+                       ("INSERT INTO `Purchase_Item`(`idpurchase`, `iditem`, `amount`) SELECT `a`, `b`, `c` FROM (SELECT LAST_INSERT_ID() as `a`, %s as `b`, %s as `c` " +
+                        insert_sql+") as `inline_table2` WHERE @purchase_value <= @coupon_value;", insert_params),
+                       ("UPDATE `coupon` SET `value`=`value`- @purchase_value WHERE `idcoupon`= %s AND @purchase_value <= @coupon_value;", (coupon,))]
             for (query, params) in queries:
                 cursor.execute(query, params)
                 if query == select_values:  # SELECT @purchase_value, @coupon_value;
@@ -127,16 +123,42 @@ def buy_items():
                     if values['purchase_value'] > values['coupon_value']:
                         conn.rollback()
                         return json.dumps(
-                            {"Message": f"El costo de la transacción es {values['purchase_value']} y el cupón tiene {values['coupon_value']}.",
+                            {"Message": "El costo de la transacción es mayor al valor del cupón.",
                              "success": False
-                            })
+                             })
             data = get_items(cursor, user['username'])
         conn.commit()
-        return  make_response(template.render(user=user['username'], coupon=coupon, data_items=data, size=len(data)))
+        return make_response(template.render(user=user['username'], coupon=coupon, data_items=data, size=len(data)))
     except Exception as e:
         conn.rollback()
         return json.dumps(
-            {"Message": f"Error en la transacción."})
+            {"Message": "Error en la transacción."})
+
+
+_sysrand = SystemRandom()
+
+randbits = _sysrand.getrandbits
+choice = _sysrand.choice
+
+
+def randbelow(exclusive_upper_bound):
+    """Return a random int in the range [0, n)."""
+    if exclusive_upper_bound <= 0:
+        raise ValueError("Upper bound must be positive.")
+    return _sysrand._randbelow(exclusive_upper_bound)
+
+
+DEFAULT_ENTROPY = 32  # number of bytes to return by default
+
+
+def token_bytes(nbytes=None):
+    if nbytes is None:
+        nbytes = DEFAULT_ENTROPY
+    return os.urandom(nbytes)
+
+def token_urlsafe(nbytes=None):
+    tok = token_bytes(nbytes)
+    return base64.urlsafe_b64encode(tok).rstrip(b'=').decode('ascii')
 
 
 @app.route('/sign_up', methods=['POST'])
@@ -152,26 +174,24 @@ def sign_up():
     conn = mysql.get_db()
     cursor = conn.cursor()
     try:
-        cursor.execute("""SELECT * FROM `User` WHERE `username` = %s;""",
+        cursor.execute("SELECT * FROM `User` WHERE `username` = %s;",
                        info_register["username"])
         data = cursor.fetchall()
         if not data:
             # id_coupon = cursor.lastrowid
-            id_coupon = secrets.token_urlsafe(48)
-            cursor.execute("""INSERT INTO `coupon`(`idCoupon`, `value`)
-                            VALUES (%(id_coupon)s, %(value)s);""",
+            id_coupon = token_urlsafe(48)
+            cursor.execute("INSERT INTO `coupon`(`idCoupon`, `value`) VALUES (%(id_coupon)s, %(value)s);",
                            {'id_coupon': id_coupon, 'value': 100})
             hashed_pw = bcrypt.hashpw(
                 info_register["password"].encode('utf-8'), bcrypt.gensalt())
             cursor.execute(
-                """INSERT INTO `User`(`username`, `password`, `idCoupon`)
-                    VALUES (%s, %s, %s);""",
+                "INSERT INTO `User`(`username`, `password`, `idCoupon`)  VALUES (%s, %s, %s);",
                 (info_register["username"], hashed_pw, id_coupon))
             conn.commit()
 
-            data = {'coupon':id_coupon}
+            data = {'idCoupon': id_coupon}
             response = make_response(template.render(data=data))
-            info_register['coupon'] = id_coupon
+            info_register['idCoupon'] = id_coupon
             create_and_set_jwt(info_register, response)
             return response
         else:
@@ -181,7 +201,6 @@ def sign_up():
         return 'dwdw'
     finally:
         cursor.close()
-    
 
 
 def authorize_and_get_user(request: Request):
@@ -192,7 +211,7 @@ def authorize_and_get_user(request: Request):
         decoded = jwt.decode(token, JWT_KEY, verify=True, algorithms='HS256')
         conn = mysql.get_db()
         with conn.cursor() as cursor:
-            cursor.execute("""SELECT * FROM `BlackListed_JWT` WHERE `token` = %s;""",
+            cursor.execute("SELECT * FROM `BlackListed_JWT` WHERE `token` = %s;",
                            token)
             data = cursor.fetchall()
             if len(data) == 0:
@@ -234,7 +253,7 @@ def logout():
         conn = mysql.get_db()
         with conn.cursor() as cursor:
             cursor.execute(
-                """INSERT INTO `BlackListed_JWT`(`token`) VALUES ('%s');""",
+                "INSERT INTO `BlackListed_JWT`(`token`) VALUES ('%s');",
                 token)
         conn.commit()
     finally:
@@ -251,13 +270,13 @@ def log_in_2():
         cursor = conn.cursor()
         try:
             cursor.execute(
-                """SELECT `username`, `password`, `idCoupon` FROM `User` WHERE 
-                `username` = %s;""",
+                "SELECT `username`, `password`, `idCoupon` FROM `User` WHERE  `username` = %s;",
                 (info_login['username']))
 
             user = cursor.fetchone()
-            if user:   
-                user ={"username":user[0], "password":user[1], "idCoupon": user[2]}
+            if user:
+                user = {"username": user[0],
+                        "password": user[1], "idCoupon": user[2]}
                 if bcrypt.checkpw(info_login["password"].encode('utf-8'), user['password']):
                     template = env.get_template('index.html')
                     response = make_response(template.render())
@@ -272,18 +291,18 @@ def log_in_2():
         finally:
             cursor.close()
 
+
 def get_items(cursor, username):
     data = []
     cursor.execute(
-            """SELECT `item`.`idItem`, `item`.`name`, `item`.`value` FROM `Purchase` `p` 
-            INNER JOIN `Purchase_item`  `pi` ON (`pi`.`idpurchase` = `p`.`idpurchase`)  
-            INNER JOIN `item` ON (`pi`.`iditem` = `item`.`idItem`)
-            WHERE `p`.`username` = %s;""", username)
+        "SELECT `item`.`idItem`, `item`.`name`, `item`.`value` FROM `Purchase` `p` " +
+        "INNER JOIN `Purchase_item`  `pi` ON (`pi`.`idpurchase` = `p`.`idpurchase`)  " +
+        "INNER JOIN `item` ON (`pi`.`iditem` = `item`.`idItem`) WHERE `p`.`username` = %s;", username)
     response = cursor.fetchall()
     for item in response:
-        data.append({"item": item[1], "quantity": item[2], "value":item[2] })
+        data.append({"item": item[1], "quantity": 1, "value": item[2]})
     return data
-    
+
 
 @app.route('/profile', methods=['GET'])
 def purchase_history():
@@ -297,17 +316,15 @@ def purchase_history():
         data = get_items(cursor, username)
 
         cursor.execute(
-            """SELECT * FROM `User` WHERE `username` = %s;""", username)
+            "SELECT * FROM `User` WHERE `username` = %s;", username)
         response = cursor.fetchall()
         if not response:
-            print("aqui2")
             return redirect("/")
         response = response[0]
         cursor.execute(
-            """SELECT * FROM `Coupon` WHERE `idCoupon` = %s;""", response[2])
+            "SELECT * FROM `Coupon` WHERE `idCoupon` = %s;", response[2])
         response = cursor.fetchall()
         if not response:
-            print("aqui1")
             return redirect("/")
         response = response[0]
         template = env.get_template('profile.html')
@@ -369,13 +386,13 @@ def drop_tables():
             {"Message": "Las tablas fueron eliminadas correctamente"})
     except:
         return json.dumps(
-            {"Message": f"Error: Las tablas no fueron eliminadas."})
+            {"Message": "Error: Las tablas no fueron eliminadas."})
 
 
 @app.route('/', methods=['GET'])
 def index():
     template = env.get_template('index.html')
-    user = authorize_and_get_user(request) 
+    user = authorize_and_get_user(request)
     if user != None:
         return make_response(template.render())
     else:
@@ -388,6 +405,7 @@ def payment():
     template = env.get_template('payment.html')
     return make_response(template.render())
 
+
 @app.route('/<path>', methods=['GET', 'POST'])
 def login_register(path):
     template = env.get_template('login.html')
@@ -396,13 +414,13 @@ def login_register(path):
     elif path == "sign_up":
         return make_response(template.render(value="register"))
 
-#Obtiene los items de la db para pintarlos en el index
+# Obtiene los items de la db para pintarlos en el index
 @app.route('/getItems', methods=['GET'])
 def getItems():
     conn = mysql.get_db()
     cursor = conn.cursor()
     try:
-        cursor.execute("""SELECT * FROM `item`""")
+        cursor.execute("SELECT * FROM `item`")
         response = cursor.fetchall()
         if response:
             return json.dumps(response)
@@ -410,6 +428,7 @@ def getItems():
             return json.dumps({"Message": "No tiene items"})
     finally:
         cursor.close()
+
 
 @app.errorhandler(404)
 @app.errorhandler(500)
@@ -421,5 +440,5 @@ def page_not_found(error):
 # The host='0.0.0.0' means the web app will be accessible to any device on the network
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0')
-    # print(check_coupon_validity("coupon1"))
-    # print(buy_items(request))
+    create_tables()
+    
