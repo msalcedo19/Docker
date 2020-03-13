@@ -5,7 +5,7 @@ services:
     container_name: php_sc
     restart: always
     ports:
-     - "8080:80"
+     - "80:80"
     volumes:
      - .:/var/www/html/ #hot reloading
     

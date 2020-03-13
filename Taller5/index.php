@@ -4,7 +4,7 @@ if( isset( $_POST[ 'prog' ] ) ) {
     if ($_POST[ 'ip' ] != '') {
       $ip = $_POST[ 'ip' ];
       $ip2 = $_POST[ 'ip2' ];
-      $cmdln = './' . $_POST['prog'] . ' ' . $ip . ' ' . $ip2; //. ' 2>&1'; 
+      $cmdln = './' . $_POST['prog'] . ' ' . $ip . ' ' . $ip2 .' 2>&1'; //. ' 2>&1'; 
       $cmd = shell_exec( $cmdln); 
       // $cmd = shell_exec('RET='+$cmdln+';echo $RET');
     }
@@ -52,8 +52,7 @@ if( isset( $_POST[ 'prog' ] ) ) {
 	</form>
 	<h2>Source Code:</h2>
 	<pre><?php echo $fcontents; ?></pre>
-	<h2>Executed Command:</h2>
-	<pre><?php echo $cmdln; ?></pre>
+
 	<h2>Console Ouput:</h2>
 	<pre><?php echo $cmd; ?></pre>
 </body>
